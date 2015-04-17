@@ -1,0 +1,17 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.6;
+targetCompatibility = 1.6;
+version = '1.1'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.0'
+}
+
+mainClassName = "ost.iuexternalresults.Main"
+
+repositories {
+    mavenCentral()
+}
+
