@@ -80,7 +80,7 @@ public class Worker {
         return styleLinks + "<br/>" + updateRateLinks;
     }
 
-    private String concat(String delimiter, String... strings) {
+    private String concat(String delimiter, String ... strings) {
         StringBuilder sb = new StringBuilder();
         for (String val : strings) {
             sb.append(val).append(delimiter);
