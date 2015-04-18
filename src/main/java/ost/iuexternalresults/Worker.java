@@ -40,14 +40,15 @@ public class Worker {
         String links = buildLinks(currentPageStyle, currentPageRefreshRate);
         mutated = trimHeader(mutated);
         mutated = addContestState(contestState + "<br/>" + links, mutated);
+        mutated = center(mutated);
         String htmlHeader = addHTMLHeader(currentPageRefreshRate);
-        mutated = center(htmlHeader + mutated);
+        mutated = htmlHeader + mutated;
         return mutated;
     }
 
     private String addHTMLHeader(PageRefreshRate currentPageRefreshRate) {
         String header = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=windows-1251\">" +
-                "<meta name=\"Author\" content=\"Fyodor Menshikov <mfv@mail.ru>\">";
+                "<meta name=\"Author\" content=\"Fyodor Menshikov <mfv@mail.ru>\"> <link rel=\"stylesheet\" href=\"gh-buttons.css\">";
         if (currentPageRefreshRate.getRefreshSec() != 0) {
             header += "<meta http-equiv=\"refresh\" content=\"" + currentPageRefreshRate.getRefreshSec() + "\" />";
         }
@@ -55,20 +56,27 @@ public class Worker {
         return header;
     }
 
-    private String buildHref(String url, String content) {
-        return "<a href=" + url + ">" + content + "</a>";
+    private String buildHref(String url, String content, boolean isCurrent) {
+        return "<a href=" + url + " class=\"button " + (isCurrent ? "active" : "") + "\">" + content + "</a>";
     }
 
     private String buildLinks(PageStyle currentPageStyle, PageRefreshRate currentRefreshRate) {
-        String fastPageLink = buildHref(buildSavedPageName(resultPagePrefix, HTML_FILE_EXTENSION, PageStyle.SLIM, currentRefreshRate), "Fast");
-        String detailPageLink = buildHref(buildSavedPageName(resultPagePrefix, HTML_FILE_EXTENSION, PageStyle.DETAIL, currentRefreshRate), "Detail");
-        String coloredPageLink = buildHref(buildSavedPageName(resultPagePrefix, HTML_FILE_EXTENSION, PageStyle.COLORED, currentRefreshRate), "Colored");
-        String neverUpdatePageLink = buildHref(buildSavedPageName(resultPagePrefix, HTML_FILE_EXTENSION, currentPageStyle, PageRefreshRate.NEVER), "Never");
-        String fiveSecUpdatePageLink = buildHref(buildSavedPageName(resultPagePrefix, HTML_FILE_EXTENSION, currentPageStyle, PageRefreshRate.SEC5), "5 sec");
-        String oneMinUpdatePageLink = buildHref(buildSavedPageName(resultPagePrefix, HTML_FILE_EXTENSION, currentPageStyle, PageRefreshRate.MINUTE), "1 min");
-        String tenMinUpdatePageLink = buildHref(buildSavedPageName(resultPagePrefix, HTML_FILE_EXTENSION, currentPageStyle, PageRefreshRate.TEN_MINUTES), "10 min");
-        String styleLinks = concat(" ", fastPageLink, detailPageLink, coloredPageLink);
-        String updateRateLinks = concat(" ", neverUpdatePageLink, fiveSecUpdatePageLink, oneMinUpdatePageLink, tenMinUpdatePageLink);
+        String fastPageLink = buildHref(buildSavedPageName(resultPagePrefix, HTML_FILE_EXTENSION, PageStyle.SLIM, currentRefreshRate),
+                "Fast", currentPageStyle == PageStyle.SLIM);
+        String detailPageLink = buildHref(buildSavedPageName(resultPagePrefix, HTML_FILE_EXTENSION, PageStyle.DETAIL, currentRefreshRate),
+                "Detail", currentPageStyle == PageStyle.DETAIL);
+        String coloredPageLink = buildHref(buildSavedPageName(resultPagePrefix, HTML_FILE_EXTENSION, PageStyle.COLORED, currentRefreshRate),
+                "Colored", currentPageStyle == PageStyle.COLORED);
+        String neverUpdatePageLink = buildHref(buildSavedPageName(resultPagePrefix, HTML_FILE_EXTENSION, currentPageStyle, PageRefreshRate.NEVER),
+                "Never", currentRefreshRate == PageRefreshRate.NEVER);
+        String fiveSecUpdatePageLink = buildHref(buildSavedPageName(resultPagePrefix, HTML_FILE_EXTENSION, currentPageStyle, PageRefreshRate.SEC5),
+                "5 sec", currentRefreshRate == PageRefreshRate.SEC5);
+        String oneMinUpdatePageLink = buildHref(buildSavedPageName(resultPagePrefix, HTML_FILE_EXTENSION, currentPageStyle, PageRefreshRate.MINUTE),
+                "1 min", currentRefreshRate == PageRefreshRate.MINUTE);
+        String tenMinUpdatePageLink = buildHref(buildSavedPageName(resultPagePrefix, HTML_FILE_EXTENSION, currentPageStyle, PageRefreshRate.TEN_MINUTES),
+                "10 min", currentRefreshRate == PageRefreshRate.TEN_MINUTES);
+        String styleLinks = "<div class=\"button-group\">" + concat(" ", fastPageLink, detailPageLink, coloredPageLink) + "</div>";
+        String updateRateLinks = "<div class=\"button-group\">" + concat(" ", neverUpdatePageLink, fiveSecUpdatePageLink, oneMinUpdatePageLink, tenMinUpdatePageLink) + "</div>";
         return styleLinks + "<br/>" + updateRateLinks;
     }
 
