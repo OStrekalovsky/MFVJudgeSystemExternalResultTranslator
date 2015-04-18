@@ -1,1 +1,1 @@
-call bin\IUExternalResultTranslator.bat "http://localhost:81/contest" "results2015" "output"
+call bin\MFVJudgeSystemExternalResultTranslator.bat "http://localhost:81/contest" "results2015" "output"
