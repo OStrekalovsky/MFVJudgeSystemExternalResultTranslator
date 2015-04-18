@@ -3,6 +3,7 @@ package ost.iuexternalresults;
 /**
  * Транслятор внешних результатов соревнований по программированию на базе проверяющей системы Фёдора Владимировича Меньшикова.
  * Параметры запуска: <адрес до сайта соревнования> <префикс для страниц результатов> <директория для выгрузки результатов>
+ * В случае ошибки пишет stack trace в консоль и завершает работу с кодом возврата 1.
  * <p/>
  * Author: Oleg Strekalovsky
  * Date: 17.04.2015
@@ -17,6 +18,7 @@ public class Main {
             new Worker(baseUrl, resultPagePrefix).run(targetDir, resultPagePrefix);
         } catch (Exception e) {
             e.printStackTrace();
+            System.exit(1);
         }
     }
 }

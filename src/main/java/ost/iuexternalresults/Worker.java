@@ -113,25 +113,36 @@ public class Worker {
     private Content getPage(String requestParams) throws IOException {
         URL url = new URL(baseUrl + "/" + RESULT_PAGE + "?" + requestParams);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        InputStream is = connection.getInputStream();
-        BufferedReader buffer = new BufferedReader(new InputStreamReader(is, "latin1"));
-        char[] content = new char[1000000];
-        int byteRead;
-        int size = 0;
-        while ((byteRead = buffer.read()) != -1) {
-            content[size] = (char) byteRead;
-            size++;
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "latin1"));
+            char[] content = new char[1000000];
+            int byteRead;
+            int size = 0;
+            while ((byteRead = reader.read()) != -1) {
+                content[size] = (char) byteRead;
+                size++;
+            }
+            return new Content(content, size);
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
         }
-        buffer.close();
-        return new Content(content, size);
     }
 
     private void saveTo(String targetDir, String pageName, char[] chars) throws IOException {
-        OutputStream outputStream = new FileOutputStream(targetDir + "/" + pageName);
-        for (int ch : chars) {
-            outputStream.write(ch);
+        OutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(targetDir + "/" + pageName);
+            for (int ch : chars) {
+                outputStream.write(ch);
+            }
+        } finally {
+            if (outputStream != null) {
+                outputStream.close();
+            }
         }
-        outputStream.close();
     }
 
     private String buildRequest(RequestParameter... parameters) {
