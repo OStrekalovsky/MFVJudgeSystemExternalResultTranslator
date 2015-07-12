@@ -95,13 +95,41 @@ public class Worker {
         final String endTag = "</pre>";
         int end = mutated.indexOf(endTag);
         String fullState = mutated.substring(start + startTag.length(), end);
-        String newLine = "\r\n";
-        int i = fullState.indexOf(newLine);
-        i = fullState.indexOf(newLine, i + 1);
-        i = fullState.indexOf(newLine, i + 1);
-        int cutPos = i + newLine.length();
-        int endCutPos = fullState.indexOf(newLine, i + 1);
-        return fullState.substring(cutPos, endCutPos);
+        return getFourthLine(fullState);
+    }
+
+    /**
+     * Returns substring from 3-rd platform specific line delimiter to 4-th line delimiter (or to EOL).
+     * @param string source string
+     * @return substring from 3-rd platform specific line delimiter to 4-th line delimiter (or to EOL)
+     */
+    private String getFourthLine(String string) {
+        int nSkippedDelimiters = 0;
+        int startOfFourthLine = -1;
+        int endOfFourthLine = -1;
+        for (int i = 0; i < string.length(); i++){
+            char ch = string.charAt(i);
+            boolean skipped = false;
+            if (ch == '\r' && i + 1 < string.length() && string.charAt(i + 1) == '\n') {
+                nSkippedDelimiters++;
+                i++;
+                skipped = true;
+            } else if (ch == '\r' || ch == '\n') {
+                nSkippedDelimiters++;
+                skipped = true;
+            }
+            if (skipped) {
+                if (nSkippedDelimiters == 3) {
+                    startOfFourthLine = i + 1;
+                } else if (nSkippedDelimiters == 4) {
+                    endOfFourthLine = i;
+                }
+            }
+        }
+        if (endOfFourthLine==-1){
+            endOfFourthLine = string.length();
+        }
+        return string.substring(startOfFourthLine,endOfFourthLine);
     }
 
     private String addContestState(String contestState, String suffix) {
@@ -232,7 +260,7 @@ enum PageStyle implements RequestParameter, PageView {
         public String getRequestParameter() {
             return "style=color";
         }
-    };
+    }
 }
 
 enum PageRefreshRate implements RequestParameter, PageView {
