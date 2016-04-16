@@ -12,7 +12,7 @@
 
 Собирается Gradle или GradleW.
 Для получения дистрибутива в (build\install\MFVJudgeSystemExternalResultTranslator\) выполнить:
-gradlew.bat installApp
+gradle.bat installApp
 
 Для запуска необходимо запустить один из исполняемых скриптов в папке bin с нужными параметрами.
 Пример батника для запуска - run.bat, который можно скопировать в каталог дистрибутива, создать каталог output и запустить.
